@@ -474,7 +474,7 @@
                     if (si > 1801) {
                         var h = Math.floor(si / 3600);
                         var m = Math.floor(si % 3600 / 60);
-                        var s = Math.floor(si % 3600 % 60);
+                        var s = Math.round(si % 3600 % 60);
 
                         var hd = h > 0 ? h + 'h ' : '';
                         var md = m > 0 ? m + 'm ' : '';
