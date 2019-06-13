@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Raubzug-Rechner</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+
+    <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+
+    <style id="compiled-css" type="text/css">
+    @import url("//unpkg.com/element-ui@2.5.3/lib/theme-chalk/index.css");
+
+    .el-button {
+        margin-bottom: 10px;
+        width: 100%;
+        background: linear-gradient(to bottom, #b69471 0%, #9f764d 22%, #8f6133 30%, #6c4d2d 100%);
+        color: white;
+        display: block;
+    }
+
+    .right-align {
+        float: right;
+    }
+
+    .el-button:focus {
+        color: white;
+    }
+
+    .text {
+        font-size: 14px;
+    }
+
+    .el-input-number {
+        width: 70px;
+    }
+
+    .time-input {
+        width: 50px;
+    }
+
+    .time-one {
+        margin-left: 10px;
+    }
+
+    .bigger-text {
+        font-size: 20px;
+    }
+
+    .mt {
+        margin-top: 3px;
+    }
+
+    #app {
+        margin: 20px;
+        color: #5b390d;
+    }
+
+    .wide-input {
+        width: 100%;
+    }
+
+    .el-row {
+        margin-bottom: 20px;
+    }
+
+    .el-radio-group {
+        width: 100%;
+    }
+
+    .el-radio-button__inner {
+        width: 100%;
+        color: #5b390d;
+        background: #f0e2be;
+    }
+
+    .el-radio-button__inner:hover {
+        color: #a55340;
+    }
+
+    .el-button:hover {
+        color: #501010;
+    }
+
+    .el-radio-button {
+        width: 40%;
+    }
+
+    .el-radio-button:first-of-type {
+        margin-left: 10px;
+    }
+
+    .el-input-number.is-controls-right .el-input__inner {
+        padding-left: 0px;
+        padding-right: 20px;
+    }
+
+    .el-input-number--small .el-input-number__decrease,
+    .el-input-number--small .el-input-number__increase {
+        width: 20px;
+        font-size: 13px;
+        color: white;
+        background: linear-gradient(to bottom, #b69471 0%, #9f764d 22%, #8f6133 30%, #6c4d2d 100%);
+    }
+
+    .el-checkbox {
+        margin-left: 5px;
+    }
+
+    .header-checker {
+        height: 18px;
+    }
+
+    .tm {
+        margin-top: 5px;
+    }
+
+    .far {
+        font-size: 18px;
+    }
+
+    .div-b {
+        width: 100%;
+    }
+
+    .margin-left {
+        margin-left: 30px;
+    }
+
+    .centered {
+        font-size: 25px;
+        transform: translateY(20%);
+    }
+
+    .down {
+        transform: translateY(-100%);
+    }
+
+    .inline {
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+
+    img {
+        height: 18px;
+        width: auto;
+        vertical-align: top;
+    }
+
+    .el-checkbox__input {
+        vertical-align: top;
+        margin-top: 3px;
+    }
+
+    .el-checkbox__input.is-checked .el-checkbox__inner,
+    .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+        background-color: #6c4d2d;
+        border-color: #6c4d2d;
+    }
+
+    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+        color: #fff;
+        background: linear-gradient(to bottom, #b69471 0%, #9f764d 22%, #8f6133 30%, #6c4d2d 100%);
+        border-color: #6c4d2d;
+    }
+
+    .el-table .second-row {
+        background: #f0e2be;
+    }
+
+    .el-table th {
+        background: #ecdaac;
+    }
+
+    .el-table tr {
+        background: #fff5da;
+    }
+
+    body {
+        background: #fff5da;
+    }
+
+    .el-table {
+        border-color: #7d510f;
+        color: #5b390d;
+    }
+
+    .el-table td,
+    .el-table th.is-leaf {
+        border-bottom-color: #7d510f;
+        color: #5b390d;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .el-table--border td,
+    .el-table--border th,
+    .el-table__body-wrapper .el-table--border.is-scrolling-left.el-table__fixed {
+        border-right-color: #7d510f;
+    }
+
+    .el-table--border::after,
+    .el-table--group::after,
+    .el-table::before {
+        background-color: #7d510f;
+    }
+    </style>
+
+    <script type="text/javascript">
+
+    window.onload = function() {
+        var Main = {
+            data() {
+                return {
+                    show: true,
+                    inputTroops: '(100) (50) (200) (50) (100) (20) (15) (1)',
+                    maxHours: '2',
+                    maxMin: '0',
+                    calcMode: 'normal',
+                    units: ['spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala'],
+                    unitsIn: ['description', 'spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala'],
+                    unitsDisp: ['description', 'spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala', 'time'],
+                    troopsUsing: {
+                        description: 'Verwenden',
+                        spear: true,
+                        sword: true,
+                        axe: true,
+                        bow: true,
+                        lkav: true,
+                        bkav: true,
+                        skav: true,
+                        pala: false
+                    },
+                    finishTime: '',
+                    scavengesUsing: [true, true, true, true],
+                    prePath: 'resources/',
+                    troopsImg: {
+                        description: 'description',
+                        spear: 'unit_spear.png',
+                        sword: 'unit_sword.png',
+                        axe: 'unit_axe.png',
+                        bow: 'unit_archer.png',
+                        lkav: 'unit_light.png',
+                        bkav: 'unit_marcher.png',
+                        skav: 'unit_heavy.png',
+                        pala: 'unit_knight.png'
+                    },
+                    troopsData: [{
+                        description: 'Truppen',
+                        spear: '',
+                        sword: '',
+                        axe: '',
+                        bow: '',
+                        lkav: '',
+                        bkav: '',
+                        skav: '',
+                        pala: ''
+                    }],
+                    scavengeData: [{
+                        description: 'Faul',
+                        spear: '',
+                        sword: '',
+                        axe: '',
+                        bow: '',
+                        lkav: '',
+                        bkav: '',
+                        skav: '',
+                        pala: '',
+                        time: ''
+                    }, {
+                        description: 'Bescheiden',
+                        spear: '',
+                        sword: '',
+                        axe: '',
+                        bow: '',
+                        lkav: '',
+                        bkav: '',
+                        skav: '',
+                        pala: '',
+                        time: ''
+                    }, {
+                        description: 'Klug',
+                        spear: '',
+                        sword: '',
+                        axe: '',
+                        bow: '',
+                        lkav: '',
+                        bkav: '',
+                        skav: '',
+                        pala: '',
+                        time: ''
+                    }, {
+                        description: 'Großartig',
+                        spear: '',
+                        sword: '',
+                        axe: '',
+                        bow: '',
+                        lkav: '',
+                        bkav: '',
+                        skav: '',
+                        pala: '',
+                        time: ''
+                    }]
+                };
+            },
+            computed: {},
+            methods: {
+                isDescription(unit) {
+                    return unit === 'description'
+                },
+                isTime(unit) {
+                    return unit === 'time'
+                },
+                isBiggerZero(number, unit) {
+                    return number > 0 || this.isTime(unit)
+                },
+                extractTroops() {
+                    // get Troops from input and parse them into troopsData to use or edit 
+                    // example: (10) (20) (30) (40) (60) (70) (80) (1)
+                    var a_all = this.inputTroops.split('(') // split using the (
+                    a_all.splice(0, 1) // throw first element away
+                    a_all.forEach((item, index) => { // go through all numbers
+                        // save each extracted number using substrings to be stored in the array aswell to display into the table
+                        this.troopsData[0][this.units[index]] = Number(item.substring(0, item.indexOf(')')))
+                    })
+                    this.calculate();
+                },
+                calculate() {
+                    this.resetScavengeData();
+
+                    // calculate the troops using this function, use ALL troops
+                    var maxTime = this.maxHours * 3600 + this.maxMin * 60
+                    var haul = Math.pow(Math.pow(maxTime - 1800, 1 / 0.45) / 100, 1 / 2)
+
+                    var GK = 0;
+                    var A = [];
+                    // put troops into A
+                    this.units.forEach((item) => {
+                        if (this.troopsUsing[item]) A.push(Number(this.troopsData[0][item]))
+                        else A.push(0)
+                    })
+
+                    var K = [25, 15, 10, 10, 80, 50, 50, 100];
+                    A.forEach(function(item, index) {
+                        GK += item * K[index]
+                    })
+
+                    var mode = 4;
+                    var inactive = this.calcMode === 'normal' ? [15, 6, 3, 2] : [0.1, 0.25, 0.5, 0.75];
+                    var total = 26;
+                    for (var i = 0; i < 4; i++) {
+                        // check which scavenges are not available
+                        if (!this.scavengesUsing[i]) {
+                            if (this.calcMode === 'normal') {
+                                total -= inactive[i];
+                            }
+                            inactive[i] = 0;
+                            mode--;
+                        }
+                    }
+
+                    var P = [2, 3, 1, 0, 5, 6, 4, 7];
+                    var RK = [0, 0, 0, 0];
+                    var AR = [
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0]
+                    ];
+
+                    RK.length = mode;
+                    var R = [];
+                    AR = [];
+
+                    inactive.forEach(function(item) {
+                        if (item > 0) {
+                            R.push(item);
+                        }
+                    })
+
+                    for (i = 0; i < mode; i++) {
+                        AR.push([0, 0, 0, 0, 0, 0, 0, 0]);
+                        RK[i] = this.calcMode === 'normal' ? GK / total * R[i] : haul / R[i];
+                    }
+
+                    for (var r = RK.length - 1; r >= 0; r--) {
+                        for (var j = 7; j >= 0; j--) {
+                            i = P[j]
+                            if (A[i] * K[i] <= RK[r]) {
+                                AR[r][i] = A[i]
+                            } else {
+                                AR[r][i] = Math.floor(RK[r] / K[i])
+                            }
+                            A[i] -= AR[r][i]
+                            RK[r] -= AR[r][i] * K[i]
+                        }
+                    }
+
+                    // loop till all troops are used
+                    if (this.calcMode === 'normal') {
+                        while (this.notEmpty(A)) {
+                            for (i = 7; i >= 0; i--) {
+                                if (A[i] > 0) {
+                                    A[i]--;
+                                    var temp = this.getMaxTime(this.getTimeArray(AR, K));
+                                    AR[temp[1]][i]++;
+                                }
+                            }
+                        }
+                    }
+
+                    // time calulation
+                    var allTimes = this.getTimeArray(AR, K)
+                    for (i = 0; i < 4; i++) {
+                        if (this.scavengesUsing[i]) this.scavengeData[i].time = this.fromSec(allTimes.shift())
+                    }
+
+                    // get max time to calc finishing time
+                    var maxUsedTime = this.getMaxTime(this.getTimeArray(AR, K))[0];
+                    var akTime = new Date();
+                    var fTime = new Date(akTime.getTime() + maxUsedTime * 1000);
+                    this.finishTime = fTime.getHours() + ':' + (fTime.getMinutes() > 9 ? fTime.getMinutes() : '0' + fTime.getMinutes()) + ' Uhr'
+
+                    this.reRender()
+                },
+                getTimeArray(AR, K) {
+                    var result = []
+                    var factors = [0.1, 0.25, 0.5, 0.75];
+                    var ar_count = 0;
+                    for (var i = 0; i < 4; i++) {
+                        if (this.scavengesUsing[i]) {
+                            var capacity = 0;
+                            AR[ar_count].forEach((count, index) => {
+                                this.scavengeData[i][this.units[index]] = count
+                                capacity += count * K[index]
+                            });
+                            var time = this.calcTime(factors[i], capacity)
+                            result.push(time)
+                            ar_count++;
+                        }
+                    }
+                    return result
+                },
+                getMaxTime(allTimes) {
+                    var maxUsedTime = 0;
+                    var maxTimeIndex = 3;
+                    allTimes.forEach((time, index) => {
+                        if (time > maxUsedTime)
+                            maxUsedTime = time
+                        maxTimeIndex = index
+                    })
+                    var result = []
+                    result.push(maxUsedTime)
+                    result.push(maxTimeIndex)
+                    return result
+                },
+                scavengeRowClassName({
+                    row,
+                    rowIndex
+                }) {
+                    // custom striped layout
+                    if (rowIndex === 1 || rowIndex === 3) {
+                        return 'second-row';
+                    } else if (rowIndex === 4) {
+                        return 'unused-row';
+                    }
+                    return '';
+                },
+                fromSec(si) {
+                    if (si > 1801) {
+                        var h = Math.floor(si / 3600);
+                        var m = Math.floor(si % 3600 / 60);
+                        var s = Math.floor(si % 3600 % 60);
+
+                        var hd = h > 0 ? h + 'h ' : '';
+                        var md = m > 0 ? m + 'm ' : '';
+                        var sd = s > 0 ? s + 's ' : '';
+                        return hd + md + sd;
+                    } else {
+                        return '';
+                    }
+                },
+                notEmpty(A) {
+                    var result = false
+                    A.forEach((item) => {
+                        if (item > 0) result = true
+                    })
+                    return result
+                },
+                calcTime(factor, capacity) {
+                    return Math.pow(Math.pow(factor * capacity, 2) * 100, 0.45) + 1800
+                },
+                resetScavengeData() {
+                    var name = ['Faul', 'Bescheiden', 'Klug', 'Großartig'];
+                    for (var i = 0; i < 4; i++) {
+                        this.scavengeData[i] = this.emptyScavengeObject(name[i])
+                    }
+                },
+                emptyScavengeObject(name) {
+                    return {
+                        description: name,
+                        spear: '',
+                        sword: '',
+                        axe: '',
+                        bow: '',
+                        lkav: '',
+                        bkav: '',
+                        skav: '',
+                        pala: '',
+                        time: ''
+                    }
+                },
+                reRender() {
+                    // needed to ensure that data shown is updated
+                    this.show = false
+                    this.$nextTick(() => {
+                        this.show = true
+                        this.$nextTick(() => {})
+                    })
+                },
+                minWidth(index) {
+                    return index === 0 ? '105' : index === 9 ? '95' : '50'
+                }
+            }
+        };
+
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app')
+
+
+    }
+    </script>
+</head>
+
+<body>
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.5.3/lib/index.js"></script>
+    <div id="app">
+        <el-row :gutter="20" justify="center">
+            <el-col :span="16">
+                <el-input class="wide-input" placeholder="Hier kopierte Truppen einfügen zB: (100) (50) (200) (50) (100) (20) (15) (1)" v-model="inputTroops"></el-input>
+            </el-col>
+            <el-col :span="8">
+                <div class="div-b">
+                    <el-button @click="extractTroops">Truppen übernehmen</el-button>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-table :data="troopsData" style="width: 100%" border>
+                <el-table-column v-for="(unit, index) in unitsIn" :prop="unit" align="center" :key="index" :resizable="false" :min-width="85">
+                    <template slot="header" slot-scope="scope">
+                        <span v-if="isDescription(unit)">
+                            {{ troopsUsing[unit] }}
+                        </span>
+                        <div v-else class="header-checker">
+                            <img :src="prePath + troopsImg[unit]" :title="unit">
+                            <el-checkbox v-model="troopsUsing[unit]" @change="calculate"></el-checkbox>
+                        </div>
+                    </template>
+                    <template slot-scope="scope">
+                        <div v-if="isDescription(unit)">
+                            {{ scope.row[unit] }}
+                        </div>
+                        <div v-else>
+                            <el-input-number v-model="scope.row[unit]" @change="calculate" :min="0" controls-position="right" size="small"></el-input-number>
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-row>
+        <el-row :gutter="20" justify="center">
+            <el-col :span="12" class="mt">
+                <el-radio-group v-model="calcMode" @change="calculate" size="medium">
+                    <el-radio-button label="normal">Gleiche Zeit</el-radio-button>
+                    <el-radio-button label="max">Maximale Zeit</el-radio-button>
+                </el-radio-group>
+            </el-col>
+            <el-col :span="10">
+                <span class="inline">
+                    <i class="far fa-clock centered"></i>
+                </span>
+                <el-input-number class="time-input time-one" v-model="maxHours" @change="calculate" :min="0" controls-position="right" size="small"></el-input-number>
+                <span class="bigger-text down">h</span>
+                <el-input-number class="time-input time-one" v-model="maxMin" @change="calculate" :min="0" :max="59" controls-position="right" size="small"></el-input-number>
+                <span class="bigger-text down">m</span>
+                <span class="bigger-text margin-left down">
+                    Fertig: {{ finishTime }}
+                </span>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20">
+            <el-table :data="scavengeData" style="width: 100%" border :row-class-name="scavengeRowClassName">
+                <el-table-column v-for="(unit, index) in unitsDisp" :prop="unit" align="center" :key="index" :resizable="false" :min-width="minWidth(index)">
+                    <template slot="header" slot-scope="scope">
+                        <img v-if="!isDescription(unit) && !isTime(unit)" :src="prePath + troopsImg[unit]" :title="unit">
+                        <i v-if="isTime(unit)" class="far fa-clock"></i>
+                    </template>
+                    <template slot-scope="scope">
+                        <div v-if="isDescription(unit)">
+                            {{ scope.row[unit] }}
+                            <el-checkbox v-if="scavengeData.indexOf(scope.row) < 4" class="right-align" v-model="scavengesUsing[scavengeData.indexOf(scope.row)]" @change="calculate"></el-checkbox>
+                        </div>
+                        <div v-if="!isDescription(unit) && isBiggerZero(scope.row[unit], unit) && show">
+                            {{ scope.row[unit] }}
+                        </div>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-row>
+    </div>
+</body>
+
+</html>
