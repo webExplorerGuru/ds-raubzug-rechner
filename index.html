@@ -542,7 +542,7 @@
     <div id="app">
         <el-row :gutter="20" justify="center">
             <el-col :span="16">
-                <el-input class="wide-input" placeholder="Hier kopierte Truppen einfügen zB: (100) (50) (200) (50) (100) (20) (15) (1)" v-model="inputTroops"></el-input>
+                <el-input class="wide-input" @focus="$event.target.select()" placeholder="Hier kopierte Truppen einfügen zB: (100) (50) (200) (50) (100) (20) (15) (1)" v-model="inputTroops"></el-input>
             </el-col>
             <el-col :span="8">
                 <div class="div-b">
