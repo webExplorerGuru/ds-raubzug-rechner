@@ -6,9 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
-
     <link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
-
     <style id="compiled-css" type="text/css">
     @import url("//unpkg.com/element-ui@2.5.3/lib/theme-chalk/index.css");
 
@@ -208,9 +206,7 @@
         background-color: #7d510f;
     }
     </style>
-
     <script type="text/javascript">
-    
     // Bilderquelle: https://github.com/Torridity/dsworkbench
     window.onload = function() {
         var Main = {
@@ -221,7 +217,10 @@
                     maxHours: '2',
                     maxMin: '0',
                     calcMode: 'normal',
+                    worldModel: '167',
                     units: ['spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala'],
+                    units167: ['spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala'],
+                    units169: ['spear', 'sword', 'axe', 'lkav', 'skav', 'pala'],
                     unitsIn: ['description', 'spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala'],
                     unitsDisp: ['description', 'spear', 'sword', 'axe', 'bow', 'lkav', 'bkav', 'skav', 'pala', 'time'],
                     troopsUsing: {
@@ -309,6 +308,23 @@
             },
             computed: {},
             methods: {
+                changeWorld() {
+                    if (this.worldModel === '167') {
+                        this.units = this.units167.slice()
+                    } else {
+                        this.units = this.units169.slice()
+                    }
+                    this.unitsIn = this.units.slice()
+                    this.unitsIn.unshift('description')
+                    this.unitsDisp = this.unitsIn.slice()
+                    this.unitsDisp.push('time')
+                    this.troopsUsing = { description: 'Verwenden' }
+                    this.scavengeData = [{ description: 'Faul', time: '' }, { description: 'Bescheiden', time: '' }, { description: 'Klug', time: '' }, { description: 'Großartig', time: '' }]
+                    this.units.forEach((item) => {
+                        this.troopsUsing[item] = item === 'pala' ? false : true
+                        this.scavengeData[item] = ''
+                    })
+                },
                 isDescription(unit) {
                     return unit === 'description'
                 },
@@ -334,7 +350,8 @@
 
                     // calculate the troops using this function, use ALL troops
                     var maxTime = this.maxHours * 3600 + this.maxMin * 60
-                    var haul = Math.pow(Math.pow(maxTime - 1800, 1 / 0.45) / 100, 1 / 2)
+                    var dr = this.worldModel === '167' ? 1 : 0.7722074897
+                    var haul = Math.pow(Math.pow(maxTime / dr - 1800, 1 / 0.45) / 100, 1 / 2)
 
                     var GK = 0;
                     var A = [];
@@ -344,7 +361,7 @@
                         else A.push(0)
                     })
 
-                    var K = [25, 15, 10, 10, 80, 50, 50, 100];
+                    var K = this.worldModel === '167' ? [25, 15, 10, 10, 80, 50, 50, 100] : [25, 15, 10, 80, 50, 100];
                     A.forEach(function(item, index) {
                         GK += item * K[index]
                     })
@@ -363,14 +380,18 @@
                         }
                     }
 
-                    // var P = [2, 3, 1, 0, 5, 6, 4, 7];
-                    var P = [7, 6, 5, 4, 3, 2, 1, 3];
+                    var P = this.worldModel === '167' ? [2, 3, 1, 0, 5, 6, 4, 7] : [2, 1, 0, 4, 3, 5];
                     var RK = [0, 0, 0, 0];
-                    var AR = [
+                    var AR = this.worldModel === '167' ? [
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0]
+                    ] : [
+                        [0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0]
                     ];
 
                     RK.length = mode;
@@ -382,14 +403,16 @@
                             R.push(item);
                         }
                     })
+                    var wnr = this.worldModel === '167' ? 7 : 5
 
                     for (i = 0; i < mode; i++) {
-                        AR.push([0, 0, 0, 0, 0, 0, 0, 0]);
+                        if (this.worldModel === '167') AR.push([0, 0, 0, 0, 0, 0, 0, 0])
+                        else AR.push([0, 0, 0, 0, 0, 0])
                         RK[i] = this.calcMode === 'normal' ? GK / total * R[i] : haul / R[i];
                     }
 
                     for (var r = RK.length - 1; r >= 0; r--) {
-                        for (var j = 7; j >= 0; j--) {
+                        for (var j = wnr; j >= 0; j--) {
                             i = P[j]
                             if (A[i] * K[i] <= RK[r]) {
                                 AR[r][i] = A[i]
@@ -404,7 +427,7 @@
                     // loop till all troops are used
                     if (this.calcMode === 'normal') {
                         while (this.notEmpty(A)) {
-                            for (i = 7; i >= 0; i--) {
+                            for (i = wnr; i >= 0; i--) {
                                 if (A[i] > 0) {
                                     A[i]--;
                                     var temp = this.getMaxTime(this.getTimeArray(AR, K));
@@ -493,7 +516,8 @@
                     return result
                 },
                 calcTime(factor, capacity) {
-                    return Math.pow(Math.pow(factor * capacity, 2) * 100, 0.45) + 1800
+                    var dr = this.worldModel === '167' ? 1 : 0.7722074897
+                    return (Math.pow(Math.pow(factor * capacity, 2) * 100, 0.45) + 1800) * dr
                 },
                 resetScavengeData() {
                     var name = ['Faul', 'Bescheiden', 'Klug', 'Großartig'];
@@ -531,8 +555,6 @@
 
         var Ctor = Vue.extend(Main)
         new Ctor().$mount('#app')
-
-
     }
     </script>
 </head>
@@ -542,10 +564,16 @@
     <script src="//unpkg.com/element-ui@2.5.3/lib/index.js"></script>
     <div id="app">
         <el-row :gutter="20" justify="center">
-            <el-col :span="16">
+            <el-col :span="10">
                 <el-input class="wide-input" @focus="$event.target.select()" placeholder="Hier kopierte Truppen einfügen zB: (100) (50) (200) (50) (100) (20) (15) (1)" v-model="inputTroops"></el-input>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" class="mt">
+                <el-radio-group v-model="worldModel" @change="changeWorld" size="medium">
+                    <el-radio-button label="167">Welt 167</el-radio-button>
+                    <el-radio-button label="169">Welt 169</el-radio-button>
+                </el-radio-group>
+            </el-col>
+            <el-col :span="6">
                 <div class="div-b">
                     <el-button @click="extractTroops">Truppen übernehmen</el-button>
                 </div>
@@ -614,12 +642,12 @@
             </el-table>
         </el-row>
         <el-row>
-            Einstellungen gelten für Welt 167<br>
+            Einstellungen gelten für Welt 167 und 169<br>
             Bilderquelle: <a href="https://github.com/Torridity/dsworkbench">DS Workbench</a><br>
             Source-Code und Erklärungen: <a href="https://github.com/webExplorerGuru/ds-raubzug-rechner">ds-raubzug-rechner</a><br>
             License: <a href="http://www.apache.org/licenses/">Apache License Version 2.0</a><br>
             Stand: 19.06.2019
-        </el-row>    
+        </el-row>
     </div>
 </body>
 
