@@ -16,7 +16,7 @@ Die benötigte Zeit sowie die daraus resultierende Uhrzeit, wann der letzte Raub
 
 Bilderquelle: [DS-Workbench](https://github.com/Torridity/dsworkbench)
 
-Stand: 18.06.2019, Einstellungen gelten für Welt 167
+Stand: 10.07.2019, Einstellungen gelten für Welt 167 sowie Welt 169
 
 ## License
 
