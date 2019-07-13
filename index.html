@@ -324,7 +324,18 @@
                         this.troopsUsing[item] = item === 'pala' ? false : true
                         this.scavengeData[item] = ''
                     })
+                    this.calculate();
                 },
+                copyRow(row) {
+                    var jsRow = document.querySelector('.scavenge-table').querySelectorAll('.el-table__row')[this.scavengeData.indexOf(row)]
+                    var selection = window.getSelection();
+                    var range = document.createRange();
+                    range.selectNodeContents(jsRow);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    document.execCommand('copy');
+                    selection.removeAllRanges();
+                },                
                 isDescription(unit) {
                     return unit === 'description'
                 },
@@ -623,7 +634,7 @@
             </el-col>
         </el-row>
         <el-row :gutter="20">
-            <el-table :data="scavengeData" style="width: 100%" border :row-class-name="scavengeRowClassName">
+        <el-table :data="scavengeData" style="width: 100%" border :row-class-name="scavengeRowClassName" @row-dblclick="copyRow" class="scavenge-table">
                 <el-table-column v-for="(unit, index) in unitsDisp" :prop="unit" align="center" :key="index" :resizable="false" :min-width="minWidth(index)">
                     <template slot="header" slot-scope="scope">
                         <img v-if="!isDescription(unit) && !isTime(unit)" :src="prePath + troopsImg[unit]" :title="unit">
@@ -636,6 +647,9 @@
                         </div>
                         <div v-if="!isDescription(unit) && isBiggerZero(scope.row[unit], unit) && show">
                             {{ scope.row[unit] }}
+                        </div>
+                        <div v-if="!isDescription(unit) && !isBiggerZero(scope.row[unit], unit) && show">
+                            &nbsp;
                         </div>
                     </template>
                 </el-table-column>
