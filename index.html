@@ -346,6 +346,17 @@
                     return number > 0 || this.isTime(unit)
                 },
                 extractTroops() {
+                    var index1 = this.inputTroops.indexOf('hast.')
+      
+                    if (index1 > 0) {
+                        this.inputTroops = this.inputTroops.substring(index1, this.inputTroops.length)
+                    }
+      
+                    var index2 = this.inputTroops.indexOf('Faule')
+                    if (index2 > 0) {
+                        this.inputTroops = this.inputTroops.substring(0, index2) 
+                    }
+      
                     // get Troops from input and parse them into troopsData to use or edit 
                     // example: (10) (20) (30) (40) (60) (70) (80) (1)
                     var a_all = this.inputTroops.split('(') // split using the (
